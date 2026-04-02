@@ -1,30 +1,72 @@
-/vendor/
+```
+# Dependencies
 node_modules/
-npm-debug.log
-yarn-error.log
+venv/
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.julia/
+zig*/
+target/
+.gradle/
 
-# Laravel 4 specific
-bootstrap/compiled.php
-app/storage/
+# Compiled/Build artifacts
+*.pyc
+*.class
+*.o
+*.exe
+*.dll
+*.so
+*.a
+*.obj
+*.out
+dist/
+build/
+coverage/
+htmlcov/
+*.log
+*.tmp
 
-# Laravel 5 & Lumen specific
-public/storage
-public/hot
-
-# Laravel 5 & Lumen specific with changed public path
-public_html/storage
-public_html/hot
-
-storage/*.key
+# Environment
 .env
-Homestead.yaml
-Homestead.json
-/.vagrant
-.phpunit.result.cache
+.env.local
+*.env.*
 
-/public/build
-/storage/pail
-.env.backup
-.env.production
-.phpactor.json
-auth.json
+# Editors/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System
+.DS_Store
+Thumbs.db
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+
+# Coverage
+.coverage
+```
