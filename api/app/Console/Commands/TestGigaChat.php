@@ -38,13 +38,13 @@ class TestGigaChat extends Command
             
             // Замер времени выполнения
             $start = microtime(true);
-            
-            $this->withSpinner('🔄 Запрос к GigaChat', function() use ($gigaChat, $products, $preferences) {
+
+            // Важно: не делаем второй запрос к GigaChat — используем результат callback.
+            $recipe = $this->withSpinner('🔄 Запрос к GigaChat', function() use ($gigaChat, $products, $preferences) {
                 return $gigaChat->generateRecipe($products, $preferences);
             });
             
             $elapsed = round(microtime(true) - $start, 2);
-            $recipe = $gigaChat->generateRecipe($products, $preferences);
             
             $this->newLine();
             $this->info("✅ Рецепт сгенерирован за {$elapsed} сек:");
@@ -109,38 +109,13 @@ class TestGigaChat extends Command
      * Отображение спиннера во время выполнения задачи
      * PHP-версия без setInterval
      */
-    protected function withSpinner(string $message, callable $callback): void
+    protected function withSpinner(string $message, callable $callback): array
     {
-        $spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
-        $i = 0;
-        $continue = true;
-        $result = null;
-        $error = null;
-        
-        // Запускаем спиннер в отдельном потоке вывода
-        while ($continue) {
-            $this->output->write("\r{$message} " . $spinner[$i % count($spinner)]);
-            usleep(100000); // 100ms
-            $i++;
-            
-            // Проверяем, не завершилась ли задача (через флаг)
-            if (!$continue) break;
-        }
-        
-        // Выполняем callback
-        try {
-            $result = $callback();
-        } catch (\Throwable $e) {
-            $error = $e;
-        } finally {
-            $continue = false;
-            // Финальный вывод
-            $this->output->write("\r{$message} " . ($error ? '❌' : '✅') . "   \n");
-        }
-        
-        if ($error) {
-            throw $error;
-        }
+        // Спиннер на Windows без потоков/pcntl неудобен и может подвешивать выполнение.
+        // Поэтому просто показываем сообщение и сразу выполняем callback.
+        $this->output->writeln($message);
+        $result = $callback();
+        return is_array($result) ? $result : ['title' => 'N/A', 'description' => (string)$result];
     }
     
     /**

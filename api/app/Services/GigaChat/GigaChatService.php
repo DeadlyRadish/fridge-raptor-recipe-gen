@@ -24,7 +24,8 @@ class GigaChatService
         $this->apiUrl = rtrim(config('services.gigachat.api_url'), '/');
         $this->clientId = config('services.gigachat.client_id');
         $this->secret = config('services.gigachat.secret');
-        $this->scope = config('services.gigachat.scope');
+        // Сбер ожидает именно корректный формат scope (строка form-urlencoded).
+        $this->scope = trim((string) config('services.gigachat.scope', 'GIGACHAT_API_PERS'));
         $this->model = config('services.gigachat.model', 'GigaChat');
         $this->verifySsl = env('GIGACHAT_VERIFY_SSL', false); // false для разработки
     }
@@ -43,8 +44,7 @@ class GigaChatService
             'timeout' => 20,
             'connect_timeout' => 10,
             'verify' => $this->verifySsl,
-        ])->withHeaders([
-            'Content-Type' => 'application/x-www-form-urlencoded',
+        ])->asForm()->withHeaders([
             'Accept' => 'application/json',
             'RqUID' => $rqUid,
             'Authorization' => "Basic {$authKey}",

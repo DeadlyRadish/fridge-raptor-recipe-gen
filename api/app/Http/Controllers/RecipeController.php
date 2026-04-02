@@ -49,7 +49,17 @@ class RecipeController extends Controller
             'products.*.quantity' => 'required|numeric|min:0.1',
             'products.*.unit' => 'required|string',
             'preferences' => 'nullable|array',
-            'preferences.*' => 'string',
+            // Поддерживаем числа/булевы, т.к. в промпт потом уходит json_encode.
+            'preferences.*' => [
+                'nullable',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $ok = is_string($value) || is_numeric($value) || is_bool($value);
+
+                    if (!$ok) {
+                        $fail('The :attribute must be a string, number, or boolean.');
+                    }
+                },
+            ],
         ]);
 
         $userId = $request->input('user_id');
