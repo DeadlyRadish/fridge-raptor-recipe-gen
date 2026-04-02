@@ -13,9 +13,9 @@ RUN apt-get update \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --prefer-dist
-
 COPY . .
+
+RUN composer install --no-interaction --prefer-dist
 
 RUN chmod +x /var/www/html/docker/entrypoint.sh \
     && ln -sf /var/www/html/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
