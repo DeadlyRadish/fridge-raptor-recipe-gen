@@ -118,7 +118,7 @@ docker compose down -v --rmi all
 
 **Пример запроса:**
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:8000/api/health
 ```
 
 **Пример ответа:**
