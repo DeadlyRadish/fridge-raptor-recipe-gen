@@ -489,20 +489,105 @@ docker compose exec api php artisan config:clear
 
 ```bash
 # Запустить тесты
+docker compose exec api composer test
+
+# Или напрямую
 docker compose exec api php artisan test
 
 # Запустить тесты с покрытием
 docker compose exec api php artisan test --coverage
 ```
 
-### Статический анализ кода (PHPStan)
+---
+
+## 🔍 Код-качество и статический анализ
+
+Проект использует современные инструменты для поддержания качества кода:
+
+### 1. Статический анализ кода (PHPStan + Larastan)
+
+[PHPStan](https://phpstan.org/) — инструмент статического анализа PHP кода для поиска ошибок без запуска кода.  
+[Larastan](https://github.com/larastan/larastan) — расширение PHPStan для Laravel, которое понимает магические методы Eloquent, фасады и другие особенности фреймворка.
+
+**Конфигурация:** `api/phpstan.neon`
 
 ```bash
-# Запустить PHPStan анализ
+# Запустить анализ через composer скрипт
 docker compose exec api composer phpstan
 
-# Или напрямую
+# Или напрямую через vendor/bin
 docker compose exec api ./vendor/bin/phpstan analyse
+
+# Запуск с конкретным уровнем строгости (0-9, где 9 - самый строгий)
+docker compose exec api ./vendor/bin/phpstan analyse --level 7
+
+# Запуск с выводом деталей ошибок
+docker compose exec api ./vendor/bin/phpstan analyse --error-format=table
+
+# Очистить кэш PHPStan (если возникают проблемы с устаревшими результатами)
+docker compose exec api ./vendor/bin/phpstan clear-result-cache
+```
+
+**Уровни анализа:**
+- Уровень 5 (по умолчанию) — баланс между строгостью и практичностью
+- Уровни 6-8 — более строгая проверка типов
+- Уровень 9 — максимальная строгость (требует идеальной типизации)
+
+**Игнорирование ошибок:**  
+Некоторые ошибки игнорируются в `phpstan.neon` (например, динамические методы Eloquent). При необходимости можно добавить свои правила в секцию `ignoreErrors`.
+
+---
+
+### 2. Code Style Fixer (Laravel Pint)
+
+[Laravel Pint](https://laravel.com/docs/pint) — официальный инструмент для автоматического форматирования кода в стиле Laravel.
+
+**Конфигурация:** Используется стандартная конфигурация Laravel (можно переопределить в `pint.json`)
+
+```bash
+# Автоматически исправить стиль кода
+docker compose exec api ./vendor/bin/pint
+
+# Проверить код без исправлений (dry-run)
+docker compose exec api ./vendor/bin/pint --test
+
+# Проверить конкретные файлы или директории
+docker compose exec api ./vendor/bin/pint app/Models
+docker compose exec api ./vendor/bin/pint app/Http/Controllers/RecipeController.php
+
+# Применить форматирование с verbose выводом
+docker compose exec api ./vendor/bin/pint -v
+```
+
+**Рекомендуемый workflow:**
+1. Перед каждым коммитом запускайте `composer phpstan` для проверки на ошибки
+2. Затем запускайте `./vendor/bin/pint` для форматирования кода
+3. Убедитесь, что все тесты проходят: `composer test`
+
+---
+
+### 3. Пре-коммит хуки (рекомендация)
+
+Для автоматизации проверок рекомендуется настроить Git hooks (например, через [husky](https://typicode.github.io/husky/)):
+
+```bash
+# Пример pre-commit хука (.git/hooks/pre-commit)
+#!/bin/bash
+echo "Running PHPStan..."
+docker compose exec api composer phpstan || exit 1
+
+echo "Running Laravel Pint..."
+docker compose exec api ./vendor/bin/pint --test || exit 1
+
+echo "Running tests..."
+docker compose exec api composer test || exit 1
+
+echo "✓ All checks passed!"
+```
+
+Сделайте хук исполняемым:
+```bash
+chmod +x .git/hooks/pre-commit
 ```
 
 ---
