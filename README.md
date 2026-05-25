@@ -495,6 +495,16 @@ docker compose exec api php artisan test
 docker compose exec api php artisan test --coverage
 ```
 
+### Статический анализ кода (PHPStan)
+
+```bash
+# Запустить PHPStan анализ
+docker compose exec api composer phpstan
+
+# Или напрямую
+docker compose exec api ./vendor/bin/phpstan analyse
+```
+
 ---
 
 ## 🔐 Безопасность
