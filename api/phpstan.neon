@@ -1,0 +1,20 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - app
+        - tests
+    scanDirectories:
+        - app
+    excludePaths:
+        - vendor/*
+    ignoreErrors:
+        # Laravel Eloquent dynamic properties and methods
+        - '#Call to an undefined static method App\\Models\\GeneratedRecipe::create\(\)\.#'
+        - '#Call to an undefined static method App\\Models\\GeneratedRecipe::findOrFail\(\)\.#'
+        - '#Access to an undefined property App\\Models\\GeneratedRecipe::\$.*\.\#'
+        - '#Access to an undefined property App\\Console\\Commands\\TestGigaChat::\$output\.\#'
+        - "#Called 'env' outside of the config directory which returns null when the config is cached, use 'config'\.#"
+        - '#Call to method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true\.\#'

@@ -3,19 +3,9 @@
 vendor/
 composer.lock
 
-# Compiled and build artifacts
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
-
 # Logs and temp files
 *.log
 *.tmp
-*.swp
 
 # Environment
 .env
@@ -25,10 +15,8 @@ composer.lock
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# PHP specific
-*.php~
-phpstan.neon
+# OS generated files
+.DS_Store
+Thumbs.db
 ```
