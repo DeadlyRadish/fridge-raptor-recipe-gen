@@ -1,0 +1,12 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - api/app
+    
+    # Полная загрузка Laravel (нужна константа LARAVEL_VERSION для Larastan)
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+        
+    level: 5

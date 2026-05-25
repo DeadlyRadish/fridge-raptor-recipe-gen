@@ -43,6 +43,7 @@ return [
     'auth_url' => env('GIGACHAT_AUTH_URL', 'https://ngw.devices.sberbank.ru:9443'),
     'api_url' => env('GIGACHAT_API_URL', 'https://gigachat.devices.sberbank.ru/api/v1'),
     'model' => env('GIGACHAT_MODEL', 'GigaChat'),
+    'verify_ssl' => filter_var(env('GIGACHAT_VERIFY_SSL', false), FILTER_VALIDATE_BOOLEAN),
 ],
 
 'storage' => [

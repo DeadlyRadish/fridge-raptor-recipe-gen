@@ -27,7 +27,7 @@ class GigaChatService
         // Сбер ожидает именно корректный формат scope (строка form-urlencoded).
         $this->scope = trim((string) config('services.gigachat.scope', 'GIGACHAT_API_PERS'));
         $this->model = config('services.gigachat.model', 'GigaChat');
-        $this->verifySsl = env('GIGACHAT_VERIFY_SSL', false); // false для разработки
+        $this->verifySsl = (bool) config('services.gigachat.verify_ssl', false);
     }
 
     public function getAccessToken(): string
