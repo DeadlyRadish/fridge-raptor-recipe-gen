@@ -1,0 +1,42 @@
+#!/bin/bash
+
+echo "Запуск pre-commit хуков..."
+
+# 1. Проверка синтаксиса PHP для измененных файлов
+echo "Проверка синтаксиса PHP..."
+files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.php$')
+if [ -n "$files" ]; then
+    for file in $files; do
+        if [ -f "$file" ]; then
+            php -l "$file" || {
+                echo "Ошибка синтаксиса в файле: $file"
+                exit 1
+            }
+        fi
+    done
+fi
+
+# 2. Проверка стиля кода (Laravel Pint)
+echo "Проверка стиля кода (Laravel Pint)..."
+if [ -f "vendor/bin/pint" ]; then
+    vendor/bin/pint --test || {
+        echo "Проверка стиля не пройдена. Запустите 'vendor/bin/pint' для автоисправления."
+        exit 1
+    }
+else
+    echo "Laravel Pint не найден. Пропускаем проверку стиля."
+fi
+
+# 3. Статический анализ (PHPStan)
+echo "Статический анализ (PHPStan)..."
+if [ -f "vendor/bin/phpstan" ]; then
+    vendor/bin/phpstan analyse --no-progress --memory-limit=1G || {
+        echo "Статический анализ не пройден."
+        exit 1
+    }
+else
+    echo "PHPStan не найден. Пропускаем статический анализ."
+fi
+
+echo "Все pre-commit проверки пройдены успешно"
+exit 0
